@@ -62,3 +62,7 @@ def serve_manifest():
 @app.route('/sw.js')
 def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
+
+# ! LOCAL RUN ONLY
+#if __name__ == '__main__':
+#    app.run(debug=True, port=5000)
