@@ -9,10 +9,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" sizes="192x192" href="{{ url_for('static', filename='icon-192x192.png') }}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="192x192" href="{{ url_for('static', filename='img/icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/icon-192x192.png') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <title>Accordion Chord Master</title>
 </head>
 
@@ -25,7 +27,7 @@
     <div class="container">
         <div class="header">
             <a href="https://razgrajaci.eu" target="_blank" class="top-left-logo">
-                <img src="{{ url_for('static', filename='harmonika.svg') }}" alt="Razgrajaci" />
+                <img src="{{ url_for('static', filename='img/harmonika.svg') }}" alt="Razgrajaci" />
                 <div class="logo-text">
                     <span>Ansambel</span>
                     <span>Razgrajači</span>
@@ -42,16 +44,6 @@
         </div>
 
         <div class="controls">
-            <div class="control-item">
-                <label style="margin-right: 12px;">Waveform:</label>
-                <select id="waveType">
-                    <option value="triangle" selected>Triangle (Natural)</option>
-                    <option value="sawtooth">Sawtooth (Bright)</option>
-                    <option value="square">Square (Retro)</option>
-                    <option value="sine">Sine (Soft)</option>
-                </select>
-            </div>
-
             <div class="control-item">
                 <label class="switch">
                     <input type="checkbox" id="kbToggle" checked>
@@ -116,109 +108,11 @@
         {% endfor %}
     </div>
 
-    <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const activeOscillators = {};
-
-        const notes = {
-            'C': 130.81, 'Cis': 138.59, 'D': 146.83, 'Dis': 155.56, 'E': 164.81, 'F': 174.61,
-            'Fis': 185.00, 'G': 196.00, 'Gis': 207.65, 'A': 220.00, 'Ais': 233.08, 'B': 233.08,
-            'H': 246.94, 'Des': 138.59, 'As': 207.65, 'Es': 155.56, 'Ges': 92.50,
-            'Am': 110.00, 'Dm': 146.83, 'Em': 164.81, 'Hm': 123.47, 'F#m': 185.00, 'C#m': 138.59,
-            'G#m': 207.65, 'D#m': 155.56, 'Fm': 174.61, 'Bbm': 116.54, 'Gm': 98.00, 'Ebm': 77.78
-        };
-
-        // Nastavitve za "lep" zvok
-        const ATTACK_TIME = 0.1;  // Sekunde do polne glasnosti
-        const RELEASE_TIME = 0.3; // Sekunde, da zvok izzveni
-        const MAX_GAIN = 0.12;    // Maksimalna glasnost
-
-        function startChord(name, type, kb) {
-            if (activeOscillators[kb]) return;
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-
-            let rootName = name.replace('m', '').replace('#', 'is');
-            if (name.includes('#')) {
-                const map = { 'F#m': 'Fis', 'C#m': 'Cis', 'G#m': 'Gis', 'D#m': 'Dis' };
-                rootName = map[name] || rootName;
-            }
-
-            let baseFreq = notes[rootName] || notes[name];
-            if (!baseFreq) return;
-
-            const isHigh = document.getElementById('oct-' + kb).checked;
-            const rootFreq = isHigh ? baseFreq * 2 : baseFreq;
-            const waveType = document.getElementById('waveType').value;
-            const intervals = type === 'major' ? [1, 1.25, 1.5, 2] : [1, 1.2, 1.5, 2];
-            const nodes = [];
-
-            intervals.forEach(interval => {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-
-                osc.type = waveType;
-                osc.frequency.setValueAtTime(rootFreq * interval, audioCtx.currentTime);
-
-                // Začetek na 0 (prepreči BUM)
-                gain.gain.setValueAtTime(0, audioCtx.currentTime);
-                // Attack faza: postopno povečanje glasnosti
-                gain.gain.linearRampToValueAtTime(MAX_GAIN, audioCtx.currentTime + ATTACK_TIME);
-
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                nodes.push({ osc, gain });
-            });
-
-            activeOscillators[kb] = nodes;
-            document.getElementById('key-' + kb).classList.add('active');
-        }
-
-        function stopChord(kb) {
-            if (activeOscillators[kb]) {
-                const now = audioCtx.currentTime;
-                activeOscillators[kb].forEach(node => {
-                    // Prepreči takojšnjo prekinitev
-                    node.gain.gain.cancelScheduledValues(now);
-                    // Release faza: zvok lepo izzveni do ničle
-                    node.gain.gain.setValueAtTime(node.gain.gain.value, now);
-                    node.gain.gain.exponentialRampToValueAtTime(0.0001, now + RELEASE_TIME);
-
-                    // Ugasni oscilator šele, ko se Release konča
-                    setTimeout(() => {
-                        node.osc.stop();
-                        node.osc.disconnect();
-                        node.gain.disconnect();
-                    }, RELEASE_TIME * 1000 + 50);
-                });
-                delete activeOscillators[kb];
-                document.getElementById('key-' + kb).classList.remove('active');
-            }
-        }
-
-        // Ostali listenerji ostanejo isti...
-        const pressedKeys = new Set();
-        window.addEventListener('keydown', (e) => {
-            if (!document.getElementById('kbToggle').checked) return;
-            const key = e.key.toLowerCase();
-            if (pressedKeys.has(key)) return;
-            const btn = document.getElementById('key-' + key);
-            if (btn) {
-                pressedKeys.add(key);
-                btn.onmousedown();
-            }
-        });
-
-        window.addEventListener('keyup', (e) => {
-            const key = e.key.toLowerCase();
-            pressedKeys.delete(key);
-            stopChord(key);
-        });
-    </script>
+    <script src="{{ url_for('static', filename='js/piano.js') }}"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('{{ url_for('static', filename='js/sw.js') }}')
                     .then(reg => console.log('Service Worker registriran!', reg))
                     .catch(err => console.log('Napaka pri registraciji!', err));
             });

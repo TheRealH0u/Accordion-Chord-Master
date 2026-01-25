@@ -263,44 +263,12 @@ button {
   box-sizing: border-box;
 }
 
-@media (orientation: portrait) and (max-width: 768px) {
-  #orientation-warning {
-    display: flex;
-  }
-
-  .container {
-    display: none;
-  }
-}
-
-@media (orientation: landscape) {
-  .group {
-    margin: 0 5px;
-  }
-
-  .row {
-    padding: 5px;
-  }
-}
-
-/* CSS za top-left ikonico */
-/* .top-left-link {
-    position: absolute;
-    top: 10px;
-    left: 10px; 
-    z-index: 9999;
-    display: inline-block;
-} */
-
 .top-left-logo:hover img {
     transform: scale(1.1);
     filter: brightness(1.2);
 }
 
 .top-left-logo {
-    /* position: fixed;
-    top: 10px;
-    left: 10px; */
     display: flex;
     align-items: center;
     gap: 8px;

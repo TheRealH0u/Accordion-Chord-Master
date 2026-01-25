@@ -1,0 +1,33 @@
+@media (orientation: portrait) and (max-width: 768px) {
+  .controls {
+    display: none;
+  }
+  #orientation-warning {
+    display: flex;
+  }
+
+  .container {
+    display: none;
+  }
+  .row-label {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+}
+
+@media (orientation: landscape) and (max-width: 840px) {
+  .controls {
+    display: none;
+  }
+  .group {
+    margin: 0 5px;
+  }
+
+  .row {
+    padding: 5px;
+  }
+  .row-label {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+  }
+}
