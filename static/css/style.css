@@ -175,7 +175,6 @@ button {
   transition: all 0.05s ease;
   position: relative;
   outline: none;
-  text-transform: uppercase;
   font-size: 0.9rem;
   color: white;
 }
@@ -186,7 +185,6 @@ button {
   color: white;
   border-radius: 12px;
   font-weight: bold;
-  text-transform: uppercase;
   box-shadow: 0 6px var(--major-shadow), 0 3px 8px rgba(0,0,0,0.3);
   transition: all 0.1s ease;
   position: relative;
@@ -204,7 +202,6 @@ button {
   color: white;
   border-radius: 12px;
   font-weight: bold;
-  text-transform: uppercase;
   box-shadow: 0 6px var(--minor-shadow), 0 3px 8px rgba(0,0,0,0.3);
   transition: all 0.1s ease;
   position: relative;
@@ -223,6 +220,7 @@ button {
   display: block;
   margin-bottom: 4px;
   opacity: 0.7;
+  text-transform: uppercase;
 }
 
 .kb-hint {

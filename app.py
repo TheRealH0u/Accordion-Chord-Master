@@ -18,8 +18,8 @@ RELATIONS = {
 
 RELATIVE_MINORS = {
     'C': 'Am', 'G': 'Em', 'D': 'Hm', 'A': 'F#m', 'E': 'C#m', 'H': 'G#m',
-    'Fis': 'D#m', 'Cis': 'A#m', 'Gis': 'Fm', 'Dis': 'Bbm', 'As': 'Fm',
-    'Es': 'Cm', 'B': 'Gm', 'F': 'Dm', 'Des': 'Bbm', 'Ges': 'Ebm', 'Ais': 'Gm'
+    'Fis': 'D#m', 'Cis': 'A#m', 'Gis': 'Fm', 'Dis': 'Bm', 'As': 'Fm',
+    'Es': 'Cm', 'B': 'Gm', 'F': 'Dm', 'Des': 'Bm', 'Ges': 'Ebm', 'Ais': 'Gm'
 }
 
 @app.route('/', methods=['GET', 'POST'])
@@ -64,5 +64,5 @@ def serve_sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
 # ! LOCAL RUN ONLY
-#if __name__ == '__main__':
-#    app.run(debug=True, port=5000)
+# if __name__ == '__main__':
+#     app.run(debug=True, port=5000)
