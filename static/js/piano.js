@@ -20,6 +20,7 @@ const sampler = new Tone.Sampler({
         108: "88.mp3"
     },
     baseUrl: "/static/samples/",
+    polyphony: 64,
     onload: () => {
         sampler.members.forEach(source => {
             source.loop = true;
@@ -28,33 +29,56 @@ const sampler = new Tone.Sampler({
 }).toDestination();
 
 async function startChord(name, type, kb) {
-    if (activeSamplers[kb]) return;
+    if (activeSamplers[kb] || !sampler.loaded) return; 
+
+    activeSamplers[kb] = "loading"; 
+
     await Tone.start();
 
-    let rootName = name.replace('m', '').replace('#', 'is');
-    if (name.includes('#')) {
-        const map = { 'F#m': 'Fis', 'C#m': 'Cis', 'G#m': 'Gis', 'D#m': 'Dis' };
-        rootName = map[name] || rootName;
+    let rootName = name.replace('m', ''); 
+    const translationMap = {
+        'F#': 'Fis', 'C#': 'Cis', 'G#': 'Gis', 'D#': 'Dis', 'A#': 'Ais',
+        'F#m': 'Fis', 'C#m': 'Cis', 'G#m': 'Gis', 'D#m': 'Dis'
+    };
+    
+    let lookupKey = translationMap[name] || rootName;
+    let midiBase = noteToMidi[lookupKey];
+
+    if (!midiBase) {
+        delete activeSamplers[kb];
+        return;
     }
 
-    let midiBase = noteToMidi[rootName] || noteToMidi[name];
-    if (!midiBase) return;
-
-    const isHigh = document.getElementById('oct-' + kb).checked;
+    const octElem = document.getElementById('oct-' + kb);
+    const isHigh = octElem ? octElem.checked : false;
     const rootMidi = isHigh ? midiBase + 12 : midiBase;
+    
     const intervals = type === 'major' ? [0, 4, 7, 12] : [0, 3, 7, 12];
-    const midiNotes = intervals.map(interval => Tone.Frequency(rootMidi + interval, "midi").toNote());
+    
+    const midiNotes = intervals.map(interval => 
+        Tone.Frequency(rootMidi + interval, "midi").toNote()
+    );
 
-    sampler.triggerAttack(midiNotes);
-    activeSamplers[kb] = midiNotes;
-    document.getElementById('key-' + kb).classList.add('active');
+    midiNotes.forEach((note, index) => {
+        sampler.triggerAttack(note, Tone.now() + (index * 0.001));
+    });
+
+    activeSamplers[kb] = midiNotes; 
+    
+    const keyElem = document.getElementById('key-' + kb);
+    if (keyElem) keyElem.classList.add('active');
 }
 
 function stopChord(kb) {
-    if (activeSamplers[kb]) {
-        sampler.triggerRelease(activeSamplers[kb]);
+    const notes = activeSamplers[kb];
+    if (notes && notes !== "loading") {
+        sampler.triggerRelease(notes);
         delete activeSamplers[kb];
-        document.getElementById('key-' + kb).classList.remove('active');
+        
+        const keyElem = document.getElementById('key-' + kb);
+        if (keyElem) keyElem.classList.remove('active');
+    } else if (notes === "loading") {
+        setTimeout(() => stopChord(kb), 50);
     }
 }
 
