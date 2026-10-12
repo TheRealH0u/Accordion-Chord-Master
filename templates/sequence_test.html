@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="sl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Accordion Chord Master - Sequencer test</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sequencer.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-shell.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"
+        onerror="this.onerror=null; this.src='https://unpkg.com/tone@14.8.49/build/Tone.js';"></script>
+</head>
+
+<body>
+    <div id="orientation-warning" role="status">
+        <span class="orientation-icon" aria-hidden="true">↻</span>
+        <h2>Obrni telefon</h2>
+        <p>Sequencer je pripravljen za ležeči način.</p>
+    </div>
+    <div class="app-layout">
+        {% set active_page = 'sequencer' %}
+        {% include '_sidebar.html' %}
+        <main class="sequencer-page app-content">
+        <header class="header">
+            <h1>Sequencer</h1>
+        </header>
+
+        <section class="toolbar" aria-label="Nastavitve predvajanja">
+            <p id="status" role="status">Pripravljen</p>
+            <button id="play" type="button">▶ Play</button>
+            <button id="stop" type="button">■ Stop</button>
+            <label>BPM <input id="bpm" type="number" min="30" max="300" value="120"></label>
+            <label>Uglasitev
+                <select id="tuning">
+                    {% for tuning in uglasitve %}<option value="{{ tuning }}" {% if tuning=='C-F-B' %}selected{% endif
+                        %}>{{ tuning }}</option>{% endfor %}
+                </select>
+            </label>
+            <label>Takt
+                <select id="time-signature">
+                    <option value="4/4">4/4</option>
+                    <option value="3/4">3/4</option>
+                </select>
+            </label>
+            <button id="undo" type="button">↶ Undo</button>
+            <button id="redo" type="button">↷ Redo</button>
+            <button id="export" type="button">Izvozi .acm</button>
+            <label class="file-button button-like">Uvozi .acm<input id="import" type="file" accept=".acm,application/json"></label>
+            <input id="sequence-name" class="sequence-name" type="text" maxlength="100" placeholder="Ime sekvence">
+            <button id="save-sequence" type="button">Shrani</button>
+            <select id="saved-sequences" aria-label="Shranjene sekvence">
+                <option value="">Shranjene sekvence</option>
+            </select>
+            <button id="load-sequence" type="button">Naloži</button>
+            <button id="delete-sequence" type="button">Izbriši</button>
+        </section>
+
+        <small>
+            <span id="page-label">Stran 1 / 1</span>
+        </small>
+        <section class="sequencer-strip" aria-label="Navigacija in mreža sekvencerja">
+            <button id="page-prev" type="button" class="nav-btn" aria-label="Prejšnja stran">◀</button>
+            <section id="grid" class="grid" aria-label="Sequencer mreža"></section>
+            <div class="strip-right">
+                <button id="page-next" type="button" class="nav-btn hidden" aria-label="Naslednja stran">▶</button>
+                <button id="add-bars" type="button" class="nav-btn" aria-label="Dodaj takte">＋</button>
+            </div>
+        </section>
+
+        <section id="tone-popup" class="tone-popup hidden" aria-label="Izbor tona" role="dialog" aria-modal="false">
+            <header class="tone-popup-header">
+                <strong id="tone-popup-title">Izberi ton</strong>
+                <button id="tone-popup-close" class="tone-popup-close" type="button" aria-label="Zapri">×</button>
+            </header>
+            <div id="tone-popup-grid" class="tone-popup-grid"></div>
+            <button id="tone-popup-remove" class="tone-popup-remove" type="button">X Odstrani tono</button>
+        </section>
+
+        <section id="bars-popup" class="bars-popup hidden" aria-label="Dodaj takte" role="dialog" aria-modal="false">
+            <header class="bars-popup-header">
+                <strong>Dodaj takte</strong>
+                <button id="bars-popup-close" class="tone-popup-close" type="button" aria-label="Zapri">×</button>
+            </header>
+            <div class="bars-presets">
+                <button class="bars-preset" type="button" data-bars="1">+1</button>
+                <button class="bars-preset" type="button" data-bars="2">+2</button>
+                <button class="bars-preset" type="button" data-bars="3">+3</button>
+                <button class="bars-preset" type="button" data-bars="4">+4</button>
+            </div>
+            <label class="bars-custom-label">Več taktov
+                <input id="bars-custom" type="number" min="1" max="32" value="1">
+            </label>
+            <button id="bars-custom-add" type="button">Dodaj</button>
+        </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/app-shell.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sequencer-state.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sequencer-history.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/sequencer-test.js') }}"></script>
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registracija - Accordion Chord Master</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-shell.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+</head>
+<body>
+    <main class="auth-page">
+        <section class="auth-card">
+            <p class="auth-kicker">Accordion Chord Master</p>
+            <h1>Registracija</h1>
+            <p class="auth-description">Ustvari račun za shranjevanje sekvenc.</p>
+            {% if error %}<p class="auth-error">{{ error }}</p>{% endif %}
+            <form method="post" class="auth-form">
+                <label>Uporabniško ime<input name="username" required minlength="3" maxlength="32" autocomplete="username"></label>
+                <label>Geslo<input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+                <button class="btn auth-submit" type="submit">Registracija</button>
+            </form>
+            <p class="auth-switch">Že imaš račun? <a href="{{ url_for('login') }}">Prijava</a></p>
+        </section>
+    </main>
+</body>
+</html>

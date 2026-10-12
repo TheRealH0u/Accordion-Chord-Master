@@ -18,6 +18,7 @@ In traditional accordion music (such as Slovenian *Narodnozabavna*), composers o
 * **Relative Minor Discovery**: Identify and test the minor chords that naturally correlate to your primary major keys.
 * **Tone.js Sampler Engine**: High-fidelity acoustic piano samples with "infinite hold" (looping) logic, allowing composers to hear how specific chord voicings sustain.
 * **Octave Layering**: Toggle the **High** switch to test how higher chord inversions interact with your ensemble's arrangement.
+* **User Accounts**: Register and sign in to save named sequencer compositions and load them later.
 
 ## 🛠️ Technical Details
 
@@ -53,4 +54,10 @@ The engine expects an optimized list of anchor files in `/static/samples/`:
 4. Run the app:
    ```bash
    python3 app.py
+   
 5. Go to http://127.0.0.1:5000/
+
+The application creates a local SQLite database at
+`instance/accordion_chord_master.db` for users and saved sequences. Set the
+`SECRET_KEY` environment variable before deploying the application; the
+development fallback in `app.py` is not suitable for production.

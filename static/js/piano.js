@@ -38,7 +38,7 @@ async function startChord(name, type, kb) {
     let rootName = name.replace('m', ''); 
     const translationMap = {
         'F#': 'Fis', 'C#': 'Cis', 'G#': 'Gis', 'D#': 'Dis', 'A#': 'Ais',
-        'F#m': 'Fis', 'C#m': 'Cis', 'G#m': 'Gis', 'D#m': 'Dis'
+        'F#m': 'Fis', 'C#m': 'Cis', 'G#m': 'Gis', 'D#m': 'Dis', 'A#m': 'Ais'
     };
     
     let lookupKey = translationMap[name] || rootName;

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#140b0b">
+    <title>Accordion Chord Master</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/icon-192x192.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-shell.css') }}">
+</head>
+<body>
+    <div class="app-layout">
+        {% set active_page = 'home' %}
+        {% include '_sidebar.html' %}
+        <main class="home-shell app-content">
+
+        <section class="welcome" aria-labelledby="welcome-title">
+            <p class="eyebrow">Accordion Chord Master</p>
+            <h1 id="welcome-title">Kaj želiš danes raziskovati?</h1>
+            <p class="welcome-copy">Izberi orodje in nadaljuj tam, kjer ustvarjaš.</p>
+        </section>
+
+        <section class="tool-grid" aria-label="Orodja">
+            <a class="tool-card chords-card" href="{{ url_for('index') }}">
+                <div class="tool-preview chord-preview" aria-hidden="true">
+                    <span class="preview-row"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="preview-row"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                    <span class="preview-row"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-kicker">01 / Harmonija</p>
+                    <h2>Akordi</h2>
+                    <p>Razišči dur, mol, dominante in relativne molove za svojo uglasitev.</p>
+                    <span class="tool-action">Odpri akorde <span aria-hidden="true">→</span></span>
+                </div>
+            </a>
+
+            <a class="tool-card sequencer-card" href="{{ url_for('sequence_test') }}">
+                <div class="tool-preview sequence-preview" aria-hidden="true">
+                    <span class="sequence-line"><i></i><i></i><i class="filled"></i><i></i><i class="long"></i><i></i><i class="filled"></i><i></i></span>
+                    <span class="sequence-line"><i></i><i class="filled"></i><i></i><i></i><i></i><i class="long filled"></i><i></i><i></i></span>
+                    <span class="sequence-line"><i class="filled"></i><i></i><i></i><i class="long"></i><i></i><i></i><i class="filled"></i><i></i></span>
+                </div>
+                <div class="tool-content">
+                    <p class="tool-kicker">02 / Ustvarjanje</p>
+                    <h2>Sequencer</h2>
+                    <p>Sestavi zaporedje akordov, raztegni tone čez takte in ga predvajaj.</p>
+                    <span class="tool-action">Odpri sequencer <span aria-hidden="true">→</span></span>
+                </div>
+            </a>
+        </section>
+
+        <footer class="home-footer">
+            <span>Začni preprosto. Raziskuj zvok.</span>
+        </footer>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/app-shell.js') }}"></script>
+</body>
+</html>
