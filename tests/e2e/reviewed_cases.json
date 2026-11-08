@@ -1,0 +1,336 @@
+{
+  "source": "Uporabnik je 8. 11. 2026 potrdil sest pregledanih primerov TC-01 do TC-06 iz naloge 2/3.",
+  "features": [
+    {
+      "id": "F-01",
+      "name": "Registracija",
+      "description": "Ustvarjanje računa z dovoljenim uporabniškim imenom in geslom ter samodejna prijava po uspešni registraciji.",
+      "source": "app.py; templates/register.html; templates/_sidebar.html",
+      "test_ids": [
+        "TC-01"
+      ]
+    },
+    {
+      "id": "F-02",
+      "name": "Preverjanje prijavnih podatkov",
+      "description": "Zavrnitev prijave ob napačnem geslu in prikaz povratnega sporočila brez prijave uporabnika.",
+      "source": "app.py; templates/login.html; templates/_sidebar.html",
+      "test_ids": [
+        "TC-02"
+      ]
+    },
+    {
+      "id": "F-03",
+      "name": "Izbira uglasitve akordov",
+      "description": "Sprememba izbrane uglasitve na strani Akordi.",
+      "source": "app.py; templates/index.html",
+      "test_ids": [
+        "TC-03"
+      ]
+    },
+    {
+      "id": "F-04",
+      "name": "Prikaz dur in mol akordov",
+      "description": "Prikaz tonike, dominante, subdominante in pripadajočih relativnih molov za izbrano uglasitev.",
+      "source": "app.py (RELATIONS in RELATIVE_MINORS); templates/index.html",
+      "test_ids": [
+        "TC-03"
+      ]
+    },
+    {
+      "id": "F-05",
+      "name": "Dodajanje tonov v sekvenco",
+      "description": "Vnos izbranega akorda na določeno polje mreže prek pogovornega okna Izbor tona.",
+      "source": "static/js/sequencer-test.js; static/js/sequencer-state.js",
+      "test_ids": [
+        "TC-04",
+        "TC-05"
+      ]
+    },
+    {
+      "id": "F-06",
+      "name": "Nastavitve sekvence",
+      "description": "Nastavljanje in prikaz uglasitve, takta ter BPM sekvence.",
+      "source": "templates/sequence_test.html; static/js/sequencer-test.js",
+      "test_ids": [
+        "TC-04"
+      ]
+    },
+    {
+      "id": "F-07",
+      "name": "Shranjevanje imenovane sekvence",
+      "description": "Shranjevanje sekvence prijavljenega uporabnika in njen prikaz v seznamu shranjenih sekvenc.",
+      "source": "app.py; static/js/sequencer-test.js",
+      "test_ids": [
+        "TC-04"
+      ]
+    },
+    {
+      "id": "F-08",
+      "name": "Nalaganje shranjene sekvence",
+      "description": "Obnova tonov in nastavitev izbrane shranjene sekvence po ponovnem odprtju strani.",
+      "source": "app.py; static/js/sequencer-test.js",
+      "test_ids": [
+        "TC-04"
+      ]
+    },
+    {
+      "id": "F-09",
+      "name": "Validacija uvoza .acm",
+      "description": "Zavrnitev datoteke z neveljavnim BPM, prikaz razloga in ohranitev trenutne sekvence.",
+      "source": "static/js/sequencer-state.js; static/js/sequencer-test.js",
+      "test_ids": [
+        "TC-05"
+      ]
+    },
+    {
+      "id": "F-10",
+      "name": "Uvoz veljavne datoteke .acm",
+      "description": "Uvoz veljavne sekvence iz datoteke ter prikaz uvoženih tonov in nastavitev.",
+      "source": "static/js/sequencer-state.js; static/js/sequencer-test.js; templates/sequence_test.html",
+      "test_ids": [
+        "TC-06"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "TC-01",
+      "title": "Uspešna registracija na spodnji dovoljeni meji",
+      "objective": "Preveriti sprejem imena s 3 in gesla z 8 znaki ter samodejno prijavo.",
+      "feature_ids": [
+        "F-01"
+      ],
+      "priority": "Visoka",
+      "type": "Pozitivni funkcionalni test, ročno izvedljiv, izveden z agentom UI",
+      "technique": "Analiza mejnih vrednosti: spodnji dovoljeni meji (3 in 8 znakov).",
+      "preconditions": [
+        "Uporabnik je odjavljen. V ločeni testni bazi ime q01 še ne obstaja."
+      ],
+      "data": [
+        "Uporabniško ime: q01 (3 znaki).",
+        "Geslo: Test!234 (8 znakov)."
+      ],
+      "steps": [
+        {
+          "action": "1. Odpri /register.",
+          "expected": "Prikažejo se naslov Registracija, polji Uporabniško ime in Geslo ter gumb Registracija."
+        },
+        {
+          "action": "2. Vnesi q01 v Uporabniško ime in Test!234 v Geslo.",
+          "expected": "Ime je vidno kot q01; vnos gesla je zakrit. Obe polji vsebujeta vneseni vrednosti."
+        },
+        {
+          "action": "3. Klikni Registracija.",
+          "expected": "Brskalnik preide na /. Sidebar prikazuje q01, Prijavljen in Odjava; sporočilo o zavrnitvi registracije ni prikazano."
+        }
+      ],
+      "postcondition": "Pričakovano: Račun q01 obstaja in je prijavljen.",
+      "cleanup": "Klikni Odjava in obnovi izhodišče potrošne testne namestitve, da bo q01 ob ponovitvi prost.",
+      "pass_criterion": "Vsi pričakovani rezultati so izpolnjeni; registracija z obema najmanjšima dovoljenima dolžinama uspe."
+    },
+    {
+      "id": "TC-02",
+      "title": "Zavrnitev prijave z napačnim geslom",
+      "objective": "Preveriti zavrnitev napačnega gesla za obstoječ račun brez vzpostavitve prijave.",
+      "feature_ids": [
+        "F-02"
+      ],
+      "priority": "Visoka",
+      "type": "Negativni funkcionalni test, ročno izvedljiv, izveden z agentom UI",
+      "technique": "Ekvivalenčni razredi: obstoječe ime in neveljavno geslo.",
+      "preconditions": [
+        "V potrošnem testnem okolju posebej pripravi račun qa_login_tc02 z geslom QaLogin!2026. Po registraciji klikni Odjava, ker registracija račun samodejno prijavi. Pred testom je uporabnik odjavljen."
+      ],
+      "data": [
+        "Uporabniško ime: qa_login_tc02.",
+        "Vneseno napačno geslo: Napacno!2026."
+      ],
+      "steps": [
+        {
+          "action": "1. Odpri /login.",
+          "expected": "Prikažejo se naslov Prijava, polji Uporabniško ime in Geslo ter gumb Prijava."
+        },
+        {
+          "action": "2. Vnesi qa_login_tc02 in napačno geslo Napacno!2026; klikni Prijava.",
+          "expected": "Stran ostane na /login in izpiše natanko: Napačno uporabniško ime ali geslo."
+        },
+        {
+          "action": "3. Ročno odpri / in preglej sidebar.",
+          "expected": "Prikazana sta Gost in Prijava ali registracija; ime qa_login_tc02 ter status Prijavljen nista prikazana."
+        }
+      ],
+      "postcondition": "Pričakovano: Uporabnik ostane odjavljen; obstoječi račun je ohranjen.",
+      "cleanup": "Zapri testno sejo brskalnika in obnovi izhodišče potrošne testne namestitve.",
+      "pass_criterion": "Prijava je zavrnjena z natančnim sporočilom, začetna stran pa potrjuje neprijavljeno stanje."
+    },
+    {
+      "id": "TC-03",
+      "title": "Sprememba uglasitve in prikaza akordov",
+      "objective": "Preveriti, da izbira A-D-G posodobi vse tri vrste dur in relativnih mol akordov.",
+      "feature_ids": [
+        "F-03",
+        "F-04"
+      ],
+      "priority": "Srednja",
+      "type": "Pozitivni funkcionalni test, ročno izvedljiv, izveden z agentom UI",
+      "technique": "Ekvivalenčni razredi: veljavna uglasitev; primerjava s konkretnimi pričakovanimi preslikavami.",
+      "preconditions": [
+        "Aplikacija je dosegljiva. Prijava ni potrebna."
+      ],
+      "data": [
+        "Začetna uglasitev C-F-B; ciljna A-D-G.",
+        "Pri A-D-G so dur akordi po vrstah A/E/D, D/A/G, G/D/C; mol akordi F#m/C#m/Hm, Hm/F#m/Em, Em/Hm/Am."
+      ],
+      "steps": [
+        {
+          "action": "1. Odpri /chords.",
+          "expected": "Izbrana je Uglasitev C-F-B, oznake vrst so C, F, B. Dur v prvi vrsti: C, G, F; mol: Am, Em, Dm."
+        },
+        {
+          "action": "2. V seznamu Uglasitev izberi A-D-G in počakaj na osvežitev strani.",
+          "expected": "Izbrana vrednost je A-D-G; oznake vrst so A, D, G."
+        },
+        {
+          "action": "3. Preveri dur gumbe v vsaki vrsti od leve proti desni.",
+          "expected": "Vrsta A: A, E, D; vrsta D: D, A, G; vrsta G: G, D, C. Oznake vlog so Tonic, Dom, Sub."
+        },
+        {
+          "action": "4. Preveri mol gumbe v vsaki vrsti od leve proti desni.",
+          "expected": "Vrsta A: F#m, C#m, Hm; vrsta D: Hm, F#m, Em; vrsta G: Em, Hm, Am. Oznake vlog so m-Tonic, m-Dom, m-Sub; noben akord ni označen z ?."
+        }
+      ],
+      "postcondition": "Pričakovano: Na strani Akordi je izbrana uglasitev A-D-G s pripadajočimi akordi.",
+      "cleanup": "V seznamu Uglasitev ponovno izberi C-F-B.",
+      "pass_criterion": "Izbrana uglasitev, oznake vrst ter vseh 18 akordov in njihovih vlog ustrezajo pričakovanim vrednostim."
+    },
+    {
+      "id": "TC-04",
+      "title": "Shranjevanje in ponovna obnova sekvence",
+      "objective": "Preveriti shranjevanje ter obnovo imena, tonov in nastavitev po osvežitvi.",
+      "feature_ids": [
+        "F-05",
+        "F-06",
+        "F-07",
+        "F-08"
+      ],
+      "priority": "Visoka",
+      "type": "Pozitivni funkcionalni test; ročno izvedljiv, izveden z agentom UI",
+      "technique": "Scenarij uporabe: sestavi–shrani–osveži–naloži.",
+      "preconditions": [
+        "Samostojno registriraj qa_save_tc04 / QaSave!2026; račun je samodejno prijavljen. TC04_Obnova ne obstaja."
+      ],
+      "data": [
+        "TC04_Obnova; A-D-G; 3/4; BPM 90.",
+        "Prvo polje A(Q), drugo E(W); dolžini en korak."
+      ],
+      "steps": [
+        {
+          "action": "1. Odpri /sequence-test.",
+          "expected": "Prazna mreža; Uglasitev C-F-B, Takt 4/4, BPM 120; sidebar qa_save_tc04."
+        },
+        {
+          "action": "2. Pred toni vpiši Ime sekvence TC04_Obnova. Nastavi Uglasitev A-D-G, Takt 3/4, BPM 90; zapusti BPM.",
+          "expected": "Ime in nastavitve ustrezajo vnosu; mreža prazna."
+        },
+        {
+          "action": "3. Klikni prvo polje; v Izbor tona izberi A(Q). Na drugem izberi E(W).",
+          "expected": "Samo A na prvem in E na drugem polju, dolžini en korak. Ton posodobljen."
+        },
+        {
+          "action": "4. Klikni Shrani.",
+          "expected": "Sekvenca je shranjena. V Shranjene sekvence je izbrana TC04_Obnova."
+        },
+        {
+          "action": "5. Osveži stran.",
+          "expected": "Prazna mreža; C-F-B, 4/4, 120; TC04_Obnova ostane na seznamu."
+        },
+        {
+          "action": "6. Izberi TC04_Obnova; klikni Naloži.",
+          "expected": "Sekvenca je naložena. Ime TC04_Obnova; A-D-G, 3/4, 90. Samo A(Q) prvo, E(W) drugo polje; dolžini en korak."
+        }
+      ],
+      "postcondition": "Pričakovano: shranjena sekvenca je obnovljena.",
+      "cleanup": "Izberi TC04_Obnova, klikni Izbriši in Odjava; odstrani testni račun.",
+      "pass_criterion": "Vsi shranjeni podatki se po nalaganju ujemajo."
+    },
+    {
+      "id": "TC-05",
+      "title": "Zavrnitev neveljavne datoteke .acm brez izgube sekvence",
+      "objective": "Preveriti zavrnitev BPM tik pod dovoljeno mejo in ohranitev že vnesenega tona ter nastavitev.",
+      "feature_ids": [
+        "F-05",
+        "F-09"
+      ],
+      "priority": "Visoka",
+      "type": "Negativni funkcionalni test, ročno izvedljiv, izveden z agentom UI",
+      "technique": "Analiza mejnih vrednosti: BPM 29, tik pod dovoljeno mejo 30.",
+      "preconditions": [
+        "Prijava ni potrebna. V ločeni testni mapi pripravi datoteko TC05_bpm29.acm z natančno spodnjo vsebino (UTF-8; ne s končnico .txt)."
+      ],
+      "data": [
+        "Datoteka TC05_bpm29.acm: {\"version\":2,\"tuning\":\"C-F-B\",\"timeSignature\":\"4/4\",\"bars\":4,\"bpm\":29,\"stepCount\":64,\"notes\":[]}",
+        "Izhodišče urejevalnika: C-F-B, 4/4, BPM 120; C (Q) na prvem polju, dolžina enega koraka."
+      ],
+      "steps": [
+        {
+          "action": "1. Odpri /sequence-test.",
+          "expected": "Mreža je prazna; Uglasitev C-F-B, Takt 4/4 in BPM 120."
+        },
+        {
+          "action": "2. Klikni prvo polje in v Izbor tona izberi C z oznako Q. Zabeleži prikaz za poznejšo primerjavo.",
+          "expected": "Prvo polje vsebuje C dolžine enega koraka; preostala polja so prazna. Nastavitve ostanejo C-F-B, 4/4, 120."
+        },
+        {
+          "action": "3. Klikni Uvozi .acm in izberi TC05_bpm29.acm.",
+          "expected": "Izpiše se natanko: BPM mora biti celo število med 30 in 300. Sporočilo ACM datoteka uspešno uvožena. ni prikazano."
+        },
+        {
+          "action": "4. Primerjaj mrežo in nastavitve s stanjem pred uvozom.",
+          "expected": "C ostane na prvem polju z dolžino enega koraka, drugih tonov ni. Uglasitev C-F-B, Takt 4/4 in BPM 120 ostanejo nespremenjeni."
+        }
+      ],
+      "postcondition": "Pričakovano: Neveljavna datoteka ni uvožena; trenutna sekvenca je ohranjena.",
+      "cleanup": "Osveži stran, zapri testno sejo in odstrani pripravljeno testno datoteko iz ločene testne mape.",
+      "pass_criterion": "Prikazan je pravi razlog zavrnitve, ton in vse preverjene nastavitve pa se ne spremenijo."
+    },
+    {
+      "id": "TC-06",
+      "title": "Uspešen uvoz veljavne datoteke .acm pri BPM 30",
+      "objective": "Preveriti sprejem veljavne datoteke pri spodnji dovoljeni meji BPM ter obnovo nastavitev in tonov.",
+      "feature_ids": [
+        "F-10"
+      ],
+      "priority": "Visoka",
+      "type": "Pozitivni funkcionalni test, ročno izvedljiv, izveden z agentom UI",
+      "technique": "Analiza mejnih vrednosti: BPM 30; veljavni ekvivalenčni razred datoteke .acm.",
+      "preconditions": [
+        "Uporabi ločeno testno kopijo in lastno bazo. Prijava ni potrebna. Neodvisno pripravi TC06_veljavna.acm v UTF-8 s spodnjo vsebino; ne uporabi izvoza drugih testov."
+      ],
+      "data": [
+        "Datoteka TC06_veljavna.acm: {\"version\":2,\"tuning\":\"A-D-G\",\"timeSignature\":\"3/4\",\"bars\":4,\"bpm\":30,\"stepCount\":48,\"notes\":[{\"key\":\"q\",\"start\":0,\"length\":1},{\"key\":\"w\",\"start\":1,\"length\":1}]}"
+      ],
+      "steps": [
+        {
+          "action": "1. Kot gost odpri /sequence-test; počakaj na začetno nalaganje.",
+          "expected": "Prazna mreža; Uglasitev C-F-B, Takt 4/4, BPM 120; Za shranjevanje sekvenc se prijavi."
+        },
+        {
+          "action": "2. Klikni Uvozi .acm in izberi TC06_veljavna.acm.",
+          "expected": "Izpiše se natanko: ACM datoteka uspešno uvožena."
+        },
+        {
+          "action": "3. Preveri Uglasitev, Takt in BPM.",
+          "expected": "Prikazane so vrednosti A-D-G, 3/4 in 30."
+        },
+        {
+          "action": "4. Preveri vse tone v mreži.",
+          "expected": "Samo A z oznako Q na prvem in E z oznako W na drugem polju; oba dolžine enega koraka. Preostala polja so prazna."
+        }
+      ],
+      "postcondition": "Pričakovano: uvožena sekvenca je prikazana z obema tonoma in nastavitvami A-D-G, 3/4, BPM 30.",
+      "cleanup": "Po shranitvi dokazil osveži stran, zapri testni zavihek in odstrani TC06_veljavna.acm; ustavi samo svoj testni strežnik.",
+      "pass_criterion": "Uvoz uspe brez napake, vse preverjene nastavitve in tona ustrezajo datoteki."
+    }
+  ]
+}

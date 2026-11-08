@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 
 <head>
     <meta charset="UTF-8">
@@ -14,34 +14,23 @@
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app-shell.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <title>Accordion Chord Master</title>
 </head>
 
-<body>
+<body class="chords-page">
     <div id="orientation-warning">
-        <h2 style="color: var(--accent-yellow);">Please Rotate Your Device</h2>
-        <p>Landscape mode is required for the best accordion experience.</p>
-        <div style="font-size: 4rem;">📱🔄</div>
-        <p>Brought to you by <a style="font-weight: bold; color: #ff9f1c;" href="https://razgrajaci.eu" target="_blank">Ansambel Razgrajači</a></p>
+        <span class="orientation-icon" aria-hidden="true">↻</span>
+        <h2>Obrni telefon</h2>
+        <p>Aplikacija je pripravljena za ležeči način.</p>
     </div>
-    <div class="container">
+    <div class="app-layout">
+        {% set active_page = 'chords' %}
+        {% include '_sidebar.html' %}
+        <main class="container app-content">
         <div class="header">
-            <a href="https://razgrajaci.eu" target="_blank" class="top-left-logo">
-                <img src="{{ url_for('static', filename='img/harmonika.svg') }}" alt="Razgrajaci" />
-                <div class="logo-text">
-                    <span>Ansambel</span>
-                    <span>Razgrajači</span>
-                </div>
-            </a>
             <h1>Accordion Chord Master</h1>
-            <form method="POST">
-                <select name="uglasitev" onchange="this.form.submit()">
-                    {% for u in uglasitve %}
-                    <option value="{{u}}" {% if u==selected %}selected{% endif %}>{{u}}</option>
-                    {% endfor %}
-                </select>
-            </form>
         </div>
 
         <div class="controls">
@@ -52,6 +41,15 @@
                 </label>
                 <span>Keyboard Controls</span>
             </div>
+            <form method="POST">
+                <label>Uglasitev
+                    <select name="uglasitev" onchange="this.form.submit()">
+                        {% for u in uglasitve %}
+                        <option value="{{u}}" {% if u==selected %}selected{% endif %}>{{u}}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </form>
         </div>
 
         {% for row in rows %}
@@ -61,7 +59,7 @@
             <div class="group">
                 {% for b in row.major %}
                 <div class="chord-unit">
-                    <button class="btn-major" id="key-{{b.kb}}"
+                    <button class="btn btn-major" id="key-{{b.kb}}"
                         onmousedown="startChord('{{b.name}}', 'major', '{{b.kb}}')" onmouseup="stopChord('{{b.kb}}')"
                         onmouseleave="stopChord('{{b.kb}}')"
                         ontouchstart="event.preventDefault(); startChord('{{b.name}}', 'major', '{{b.kb}}')"
@@ -85,7 +83,7 @@
             <div class="group">
                 {% for b in row.minor %}
                 <div class="chord-unit">
-                    <button class="btn-minor" id="key-{{b.kb}}"
+                    <button class="btn btn-minor" id="key-{{b.kb}}"
                         onmousedown="startChord('{{b.name}}', 'minor', '{{b.kb}}')" onmouseup="stopChord('{{b.kb}}')"
                         onmouseleave="stopChord('{{b.kb}}')"
                         ontouchstart="event.preventDefault(); startChord('{{b.name}}', 'minor', '{{b.kb}}')"
@@ -107,9 +105,11 @@
             </div>
         </div>
         {% endfor %}
+        </main>
     </div>
 
     <script src="{{ url_for('static', filename='js/piano.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app-shell.js') }}"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

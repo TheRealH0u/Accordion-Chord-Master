@@ -1,0 +1,51 @@
+<aside id="app-sidebar" class="app-sidebar" aria-label="Glavna navigacija">
+    <a class="sidebar-brand" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='img/harmonika.svg') }}" alt="">
+        <span>Accordion<br>Chord Master</span>
+    </a>
+    <button class="sidebar-toggle" type="button" aria-expanded="true" aria-controls="app-sidebar" title="Skrij sidebar">
+        <span aria-hidden="true">◀</span>
+    </button>
+
+    <nav class="sidebar-nav">
+        <span class="sidebar-label">Workspace</span>
+        <a class="sidebar-link {% if active_page == 'home' %}is-active{% endif %}" href="{{ url_for('home') }}">
+            <span aria-hidden="true">⌂</span>
+            <span>Domov</span>
+        </a>
+        <a class="sidebar-link {% if active_page == 'chords' %}is-active{% endif %}" href="{{ url_for('index') }}">
+            <span aria-hidden="true">♫</span>
+            <span>Akordi</span>
+        </a>
+        <a class="sidebar-link {% if active_page == 'sequencer' %}is-active{% endif %}" href="{{ url_for('sequence_test') }}">
+            <span aria-hidden="true">▤</span>
+            <span>Sequencer</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-spacer"></div>
+
+    <section class="sidebar-account" aria-label="Uporabniški račun">
+        <span class="sidebar-label">Account</span>
+        {% if user %}
+            <div class="account-card">
+                <span class="account-avatar" aria-hidden="true">{{ user.username[0]|upper }}</span>
+                <span class="account-copy">
+                    <strong>{{ user.username }}</strong>
+                    <small>Prijavljen</small>
+                </span>
+            </div>
+            <form class="account-action" method="post" action="{{ url_for('logout') }}">
+                <button class="btn account-button" type="submit">Odjava</button>
+            </form>
+        {% else %}
+            <a class="account-card account-link" href="{{ url_for('login') }}">
+                <span class="account-avatar" aria-hidden="true">G</span>
+                <span class="account-copy">
+                    <strong>Gost</strong>
+                    <small>Prijava ali registracija</small>
+                </span>
+            </a>
+        {% endif %}
+    </section>
+</aside>
